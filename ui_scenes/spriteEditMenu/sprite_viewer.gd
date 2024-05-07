@@ -32,13 +32,13 @@ func setImage():
 
 	$WobbleControl/UseMidi.button_pressed = Global.heldSprite.useMidiWobble
 
-	$WobbleControl/xFrqLabel.text = "x frequency: " + str(Global.heldSprite.xFrq)
+	$WobbleControl/xFrqLabel.text = "x frequency: " + get_scaled_frequency(Global.heldSprite.xFrq)
 	$WobbleControl/xAmpLabel.text = "x amplitude: " + str(Global.heldSprite.xAmp)
 
 	$WobbleControl/xFrq.value = Global.heldSprite.xFrq
 	$WobbleControl/xAmp.value = Global.heldSprite.xAmp
 
-	$WobbleControl/yFrqLabel.text = "y frequency: " + str(Global.heldSprite.yFrq)
+	$WobbleControl/yFrqLabel.text = "y frequency: " + get_scaled_frequency(Global.heldSprite.yFrq)
 	$WobbleControl/yAmpLabel.text = "y amplitude: " + str(Global.heldSprite.yAmp)
 
 	$WobbleControl/yFrq.value = Global.heldSprite.yFrq
@@ -129,12 +129,21 @@ func _on_drag_slider_value_changed(value):
 
 
 func _on_use_midi_toggled(value: bool):
-	# $WobbleControl/useMidi.button_pressed = value
 	Global.heldSprite.useMidiWobble = value
+	# Update label text
+	_on_x_frq_value_changed(Global.heldSprite.xFrq)
+	_on_y_frq_value_changed(Global.heldSprite.yFrq)
+
+
+func get_scaled_frequency(value):
+	if Global.heldSprite.useMidiWobble:
+		return str(value * 1000) + "% BPM"
+	else:
+		return str(value)
 
 
 func _on_x_frq_value_changed(value):
-	$WobbleControl/xFrqLabel.text = "x frequency: " + str(value)
+	$WobbleControl/xFrqLabel.text = "x frequency: " + get_scaled_frequency(value)
 	Global.heldSprite.xFrq = value
 
 
@@ -144,7 +153,7 @@ func _on_x_amp_value_changed(value):
 
 
 func _on_y_frq_value_changed(value):
-	$WobbleControl/yFrqLabel.text = "y frequency: " + str(value)
+	$WobbleControl/yFrqLabel.text = "y frequency: " + get_scaled_frequency(value)
 	Global.heldSprite.yFrq = value
 
 
