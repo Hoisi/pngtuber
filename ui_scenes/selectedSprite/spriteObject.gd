@@ -48,8 +48,7 @@ var origTick = 0
 var offset = Vector2.ZERO
 
 #Wobble
-var use_midi_wobble = true  # TODO: Add to settings
-
+var useMidiWobble = false
 var xFrq = 0.0
 var xAmp = 0.0
 
@@ -163,7 +162,7 @@ func _ready():
 
 
 func _input(event):
-	if use_midi_wobble and event is InputEventMIDI:
+	if self.useMidiWobble and event is InputEventMIDI:
 		match event.message:
 			MIDIMessage.MIDI_MESSAGE_START:
 				tick = 0
@@ -222,7 +221,7 @@ func replaceSprite(pathNew):
 
 
 func _process(delta):
-	if not use_midi_wobble:
+	if not self.useMidiWobble:
 		tick += 1
 
 	if Global.heldSprite == self:
@@ -345,7 +344,7 @@ func drag(delta):
 
 
 func wobble():
-	if use_midi_wobble:
+	if self.useMidiWobble:
 		midi_wobble()
 	else:
 		free_wobble()

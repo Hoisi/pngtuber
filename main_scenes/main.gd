@@ -64,7 +64,7 @@ func _ready():
 	ElgatoStreamDeck.on_key_down.connect(changeCostumeStreamDeck)
 
 	OS.open_midi_inputs()
-	print(OS.get_connected_midi_inputs())
+	# print(OS.get_connected_midi_inputs())
 
 	if Saving.settings["newUser"]:
 		_on_load_dialog_file_selected("default")
@@ -332,6 +332,7 @@ func _on_load_dialog_file_selected(path):
 		sprite.z = data[item]["zindex"]
 		sprite.dragSpeed = data[item]["drag"]
 
+		sprite.useMidiWobble = data[item]["useMidiWobble"]
 		sprite.xFrq = data[item]["xFrq"]
 		sprite.xAmp = data[item]["xAmp"]
 		sprite.yFrq = data[item]["yFrq"]
@@ -402,6 +403,7 @@ func _on_save_dialog_file_selected(path):
 
 			data[id]["drag"] = child.dragSpeed
 
+			data[id]["useMidiWobble"] = child.useMidiWobble
 			data[id]["xFrq"] = child.xFrq
 			data[id]["xAmp"] = child.xAmp
 			data[id]["yFrq"] = child.yFrq
@@ -487,6 +489,7 @@ func _on_duplicate_button_pressed():
 	sprite.showOnBlink = Global.heldSprite.showOnBlink
 	sprite.z = Global.heldSprite.z
 
+	sprite.useMidiWobble = Global.heldSprite.useMidiWobble
 	sprite.xFrq = Global.heldSprite.xFrq
 	sprite.xAmp = Global.heldSprite.xAmp
 	sprite.yFrq = Global.heldSprite.yFrq
@@ -563,7 +566,7 @@ func moveSpriteMenu(delta):
 
 	var size = get_viewport().get_visible_rect().size
 
-	var windowLength = 1250  #1187
+	var windowLength = 1300  #1187
 
 	$ViewerArrows/Arrows.position.y = size.y - 25
 
@@ -611,7 +614,6 @@ func _on_settings_buttons_pressed():
 
 
 func _on_background_input_capture_bg_key_pressed(node, keys_pressed):
-	print("background key pressed")
 	var keyStrings = []
 
 	for i in keys_pressed:
@@ -660,7 +662,6 @@ func _on_background_input_capture_bg_key_pressed(node, keys_pressed):
 
 
 func bgInputSprite(node, keys_pressed):
-	print("bgInputSprite")
 	if fileSystemOpen:
 		return
 	var keyStrings = []
