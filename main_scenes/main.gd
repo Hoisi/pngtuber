@@ -566,7 +566,7 @@ func moveSpriteMenu(delta):
 
 	var size = get_viewport().get_visible_rect().size
 
-	var windowLength = 1300  #1187
+	var windowLength = 1275  #1187
 
 	$ViewerArrows/Arrows.position.y = size.y - 25
 
