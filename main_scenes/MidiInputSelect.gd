@@ -10,7 +10,6 @@ func _ready():
 	popup.connect("index_pressed", toggle_checked)
 	available_devices = OS.get_connected_midi_inputs()
 
-	print("midiinputselect ready" + str(available_devices))
 	Global.currentMidiDevices = available_devices  # Listen to all devices by default
 
 
