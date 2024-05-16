@@ -162,7 +162,11 @@ func _ready():
 
 
 func _input(event):
-	if self.useMidiWobble and event is InputEventMIDI:
+	if not self.useMidiWobble or not event is InputEventMIDI:
+		return
+
+	var device = OS.get_connected_midi_inputs()[event.device]
+	if device in Global.currentMidiDevices:
 		match event.message:
 			MIDIMessage.MIDI_MESSAGE_START:
 				tick = 0
@@ -339,7 +343,9 @@ func drag(delta):
 	if dragSpeed == 0:
 		dragger.global_position = wob.global_position
 	else:
-		dragger.global_position = lerp(dragger.global_position, wob.global_position, 1 / dragSpeed)
+		dragger.global_position = lerp(
+			dragger.global_position, wob.global_position, 1.0 / dragSpeed
+		)
 		dragOrigin.global_position = dragger.global_position
 
 

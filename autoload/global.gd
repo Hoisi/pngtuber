@@ -40,6 +40,9 @@ var volumeSensitivity = 0.0
 var volumeLimit = 0.0
 var senseLimit = 0.0
 
+# Midi
+var currentMidiDevices = []
+
 #Speak Signals
 signal startSpeaking
 signal stopSpeaking

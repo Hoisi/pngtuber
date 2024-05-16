@@ -64,7 +64,7 @@ func _ready():
 	ElgatoStreamDeck.on_key_down.connect(changeCostumeStreamDeck)
 
 	OS.open_midi_inputs()
-	# print(OS.get_connected_midi_inputs())
+	Global.currentMidiDevices = OS.get_connected_midi_inputs()
 
 	if Saving.settings["newUser"]:
 		_on_load_dialog_file_selected("default")
@@ -331,7 +331,6 @@ func _on_load_dialog_file_selected(path):
 		sprite.offset = str_to_var(data[item]["offset"])
 		sprite.z = data[item]["zindex"]
 		sprite.dragSpeed = data[item]["drag"]
-
 		sprite.useMidiWobble = data[item]["useMidiWobble"]
 		sprite.xFrq = data[item]["xFrq"]
 		sprite.xAmp = data[item]["xAmp"]
