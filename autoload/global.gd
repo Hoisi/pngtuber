@@ -35,6 +35,7 @@ var speaking = false
 var spectrum
 var volume = 0
 var volumeSensitivity = 0.0
+var experimentalMicLoudness = false
 
 var volumeLimit = 0.0
 var senseLimit = 0.0
@@ -53,6 +54,11 @@ func _ready():
 	if !Saving.settings.has("useStreamDeck"):
 		Saving.settings["useStreamDeck"] = false
 	
+	if Saving.settings.has("experimentalMicLoudness"):
+		Global.experimentalMicLoudness = Saving.settings["experimentalMicLoudness"]
+	else:
+		Saving.settings["experimentalMicLoudness"] = false
+		
 	createMicrophone()
 
 func createMicrophone():
@@ -70,7 +76,8 @@ func createMicrophone():
 func _process(delta):
 	animationTick += 1
 	
-	volume = spectrum.get_magnitude_for_frequency_range(20, 20000).length()
+	volume = (AudioServer.get_bus_peak_volume_left_db(1, 0) + AudioServer.get_bus_peak_volume_right_db(1, 0)) / 1600.0 + 0.25 if experimentalMicLoudness else spectrum.get_magnitude_for_frequency_range(20, 20000).length()
+	
 	if playa != null:
 		volumeSensitivity = lerp(volumeSensitivity,0.0,delta*2)
 	

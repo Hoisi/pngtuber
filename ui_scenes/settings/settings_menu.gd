@@ -38,6 +38,8 @@ func setvalues():
 		label.text = "costume " + str(tag) + " key: \"" + Global.main.costumeKeys[tag-1] + "\""
 		tag += 1
 	
+	$experimentalMicLoudness/checkmark.button_pressed = Global.experimentalMicLoudness
+	
 func _on_color_picker_button_color_changed(color):
 	get_viewport().transparent_bg = false
 	RenderingServer.set_default_clear_color(color)
@@ -189,6 +191,11 @@ func _on_blink_chance_value_changed(value):
 func _on_costume_check_toggled(button_pressed):
 	Global.main.bounceOnCostumeChange = button_pressed
 	Saving.settings["bounceOnCostumeChange"] = button_pressed
+
+
+func _on_experimental_mic_loudness_toggle(checked):
+	Global.experimentalMicLoudness = checked
+	Saving.settings["experimentalMicLoudness"] = checked
 
 
 func _process(delta):
