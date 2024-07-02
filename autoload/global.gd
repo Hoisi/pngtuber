@@ -29,8 +29,7 @@ var blink = false
 var blinkTick = 0
 
 #Audio Listener
-
-var currentMicrophone = null
+var playa:AudioStreamPlayer
 
 var speaking = false
 var spectrum
@@ -44,8 +43,6 @@ var senseLimit = 0.0
 signal startSpeaking
 signal stopSpeaking
 
-var micResetTime = 180
-
 var updatePusherNode = null
 
 var rand = RandomNumberGenerator.new()
@@ -56,39 +53,25 @@ func _ready():
 	if !Saving.settings.has("useStreamDeck"):
 		Saving.settings["useStreamDeck"] = false
 	
-	if Saving.settings.has("secondsToMicReset"):
-		Global.micResetTime = Saving.settings["secondsToMicReset"]
-	else:
-		Saving.settings["secondsToMicReset"] = 180
-		
 	createMicrophone()
 
 func createMicrophone():
-	var playa = AudioStreamPlayer.new()
-	var mic = AudioStreamMicrophone.new()
-	playa.stream = mic
-	playa.autoplay = true
+	if playa != null:
+		remove_child(playa)
+		playa.free()
+	playa = AudioStreamPlayer.new()
 	playa.bus = "MIC"
+	playa.stream = AudioStreamMicrophone.new()
 	add_child(playa)
-	currentMicrophone = playa
-	await get_tree().create_timer(micResetTime).timeout
-	if currentMicrophone != playa:
-		return
-	deleteAllMics()
-	currentMicrophone = null
-	await get_tree().create_timer(0.25).timeout
-	createMicrophone()
-
-func deleteAllMics():
-	for child in get_children():
-		child.queue_free()
+	await get_tree().create_timer(0.25).timeout # apparently it works to fix WASAPI "Initialize failed with error 0xffffffff88890002" and "init_input_device" errors
+	playa.play()
 
 
 func _process(delta):
 	animationTick += 1
 	
 	volume = spectrum.get_magnitude_for_frequency_range(20, 20000).length()
-	if currentMicrophone != null:
+	if playa != null:
 		volumeSensitivity = lerp(volumeSensitivity,0.0,delta*2)
 	
 	if volume>volumeLimit:
