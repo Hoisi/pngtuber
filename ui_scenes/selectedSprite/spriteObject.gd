@@ -271,10 +271,28 @@ func _physics_process(delta):
 		var dir = pressingDirection()
 		if Input.is_action_pressed("origin"):
 			moveOrigin(dir)
+		elif Input.is_action_pressed("rotate"):
+			rotateSprite(dir)
 		else:
 			moveSprite(dir)
 	else:
 		set_physics_process(false)
+
+func rotateSprite(dir) -> void:
+	if dir != Vector2.ZERO:
+		heldTicks += 1
+	else:
+		heldTicks = 0
+	
+	if heldTicks > 30 or heldTicks == 1:
+		var multiplier = 2
+		if heldTicks == 1:
+			multiplier = 1
+		rotation -= deg_to_rad(dir.x * multiplier)
+	if rad_to_deg(rotation) >= 360:
+		rotation = 0
+	elif rad_to_deg(rotation) <= -360:
+		rotation = 0
 
 func pressingDirection():
 	var dir = Vector2.ZERO
@@ -284,6 +302,7 @@ func pressingDirection():
 	return dir
 	
 func moveSprite(dir):
+	
 	if dir != Vector2.ZERO:
 		heldTicks += 1
 	else:
@@ -330,10 +349,11 @@ func wobble():
 func rotationalDrag(length,delta):
 	var yvel = (length * rdragStr)
 	
+	
 	#Calculate Max angle
 	
 	yvel = clamp(yvel,rLimitMin,rLimitMax)
-	
+
 	sprite.rotation = lerp_angle(sprite.rotation,deg_to_rad(yvel),0.25)
 
 func stretch(length,delta):

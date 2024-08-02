@@ -356,6 +356,8 @@ func _on_load_dialog_file_selected(path):
 			sprite.clipped = data[item]["clipped"]
 		if data[item].has("toggle"):
 			sprite.toggle = data[item]["toggle"]
+		if data[item].has("baseRotation"):
+			sprite.rotation = data[item]["baseRotation"]
 		
 		origin.add_child(sprite)
 		sprite.position = str_to_var(data[item]["pos"])
@@ -414,6 +416,7 @@ func _on_save_dialog_file_selected(path):
 			data[id]["clipped"] = child.clipped
 			
 			data[id]["toggle"] = child.toggle
+			data[id]["baseRotation"] = child.rotation
 			
 		id += 1
 	
