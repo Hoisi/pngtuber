@@ -103,6 +103,7 @@ func _process(delta):
 	
 	$Position/Label.text = "position     X : "+str(obj.position.x)+"     Y: " + str(obj.position.y)
 	$Position/Label2.text = "offset         X : "+str(obj.offset.x)+"     Y: " + str(obj.offset.y)
+	$Position/Label4.text = "rotation     X : "+str(int(rad_to_deg(obj.rotation)))
 	$Position/Label3.text = "layer : "+str(obj.z)
 	
 	#Sprite Rotational Limit Display
