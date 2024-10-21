@@ -134,10 +134,21 @@ func get_scaled_frequency(value):
 	else:
 		return str(value)
 
+# Create a 10 unit detant every 25 units
+const DEAD_ZONE = 10
+const SCALE_FACTOR = 1000.0
+func snap_slider_to_detant(value):
+	var scaled_value = int(value * SCALE_FACTOR) # I guess you can only mod ints in gdscript?
+	var distance = scaled_value % 25
+
+	if distance > DEAD_ZONE: return value
+	
+	return (scaled_value - distance) / SCALE_FACTOR
 
 func _on_x_frq_value_changed(value):
-	$WobbleControl/xFrqLabel.text = "x frequency: " + get_scaled_frequency(value)
-	Global.heldSprite.xFrq = value
+	var snapped_value = snap_slider_to_detant(value) if Global.heldSprite.useMidiWobble else value
+	$WobbleControl/xFrqLabel.text = "x frequency: " + get_scaled_frequency(snapped_value)
+	Global.heldSprite.xFrq = snapped_value
 	
 
 func _on_x_amp_value_changed(value):
@@ -146,8 +157,9 @@ func _on_x_amp_value_changed(value):
 
 
 func _on_y_frq_value_changed(value):
-	$WobbleControl/yFrqLabel.text = "y frequency: " + get_scaled_frequency(value)
-	Global.heldSprite.yFrq = value
+	var snapped_value = snap_slider_to_detant(value) if Global.heldSprite.useMidiWobble else value
+	$WobbleControl/yFrqLabel.text = "y frequency: " + get_scaled_frequency(snapped_value)
+	Global.heldSprite.yFrq = snapped_value
 
 func _on_y_amp_value_changed(value):
 	$WobbleControl/yAmpLabel.text = "y amplitude: " + str(value)

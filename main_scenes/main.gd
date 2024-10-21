@@ -321,7 +321,7 @@ func _on_load_dialog_file_selected(path):
 		sprite.offset = str_to_var(data[item]["offset"])
 		sprite.z = data[item]["zindex"]
 		sprite.dragSpeed = data[item]["drag"]
-		sprite.useMidiWobble = data[item]["useMidiWobble"]
+		sprite.useMidiWobble = data[item]["useMidiWobble"] if data[item].has("useMidiWobble") else false
 		
 		sprite.xFrq = data[item]["xFrq"]
 		sprite.xAmp = data[item]["xAmp"]
@@ -393,6 +393,7 @@ func _on_save_dialog_file_selected(path):
 			
 			data[id]["drag"] = child.dragSpeed
 			
+			data[id]["useMidiWobble"] = child.useMidiWobble
 			data[id]["xFrq"] = child.xFrq
 			data[id]["xAmp"] = child.xAmp
 			data[id]["yFrq"] = child.yFrq
