@@ -49,6 +49,7 @@ var origTick = 0
 var offset = Vector2.ZERO
 
 #Wobble
+var useMidiWobble = false
 var xFrq = 0.0
 var xAmp = 0.0
 
@@ -163,6 +164,20 @@ func _ready():
 	if Global.filtering:
 		sprite.texture_filter = 2
 	
+func _input(event):
+	if not self.useMidiWobble or not event is InputEventMIDI:
+		return
+
+	var device = OS.get_connected_midi_inputs()[event.device]
+	if device in Global.currentMidiDevices:
+		match event.message:
+			MIDIMessage.MIDI_MESSAGE_START:
+				tick = 0
+			MIDIMessage.MIDI_MESSAGE_STOP:
+				tick = 0
+			MIDIMessage.MIDI_MESSAGE_TIMING_CLOCK:
+				tick += 1
+
 func replaceSprite(pathNew):
 	var img = Image.new()
 	var err = img.load(pathNew)
@@ -213,7 +228,9 @@ func replaceSprite(pathNew):
 		remakePolygon()
 
 func _process(delta):
-	tick += 1
+	if not self.useMidiWobble:
+		tick += 1
+
 	if Global.heldSprite == self:
 		
 		grabArea.visible = true
@@ -323,9 +340,25 @@ func drag(delta):
 		dragger.global_position = lerp(dragger.global_position,wob.global_position,1/dragSpeed)
 		dragOrigin.global_position = dragger.global_position
 
+
 func wobble():
-	wob.position.x = sin(tick*xFrq)*xAmp
-	wob.position.y = sin(tick*yFrq)*yAmp
+	if self.useMidiWobble:
+		midi_wobble()
+	else:
+		free_wobble()
+
+
+func free_wobble():
+	wob.position.x = sin(tick * xFrq) * xAmp
+	wob.position.y = sin(tick * yFrq) * yAmp
+
+
+func midi_wobble():
+	var ppqn = 24
+	var progress = float(tick) / ppqn
+	var rads = progress * 2 * PI
+	wob.position.x = cos(rads * xFrq * 10) * xAmp
+	wob.position.y = cos(rads * yFrq * 10) * yAmp
 
 func rotationalDrag(length,delta):
 	var yvel = (length * rdragStr)
@@ -374,8 +407,8 @@ func remakePolygon():
 	
 	remadePolygon = true
 	
-func setClip(toggle):
-	if toggle:
+func setClip(should_clip):
+	if should_clip:
 		sprite.clip_children = CLIP_CHILDREN_AND_DRAW
 		
 		for node in getAllLinkedSprites():
@@ -385,7 +418,7 @@ func setClip(toggle):
 	else:
 		sprite.clip_children = CLIP_CHILDREN_DISABLED
 		
-	clipped = toggle
+	clipped = should_clip
 
 func getAllLinkedSprites():
 	var nodes = get_tree().get_nodes_in_group("saved")

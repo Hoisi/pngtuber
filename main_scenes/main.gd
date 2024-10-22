@@ -63,6 +63,9 @@ func _ready():
 	Global.connect("startSpeaking",onSpeak)
 	
 	ElgatoStreamDeck.on_key_down.connect(changeCostumeStreamDeck)
+
+	OS.open_midi_inputs()
+	Global.currentMidiDevices = OS.get_connected_midi_inputs()
 	
 	if Saving.settings["newUser"]:
 		_on_load_dialog_file_selected("default")
@@ -318,6 +321,7 @@ func _on_load_dialog_file_selected(path):
 		sprite.offset = str_to_var(data[item]["offset"])
 		sprite.z = data[item]["zindex"]
 		sprite.dragSpeed = data[item]["drag"]
+		sprite.useMidiWobble = data[item]["useMidiWobble"] if data[item].has("useMidiWobble") else false
 		
 		sprite.xFrq = data[item]["xFrq"]
 		sprite.xAmp = data[item]["xAmp"]
@@ -389,6 +393,7 @@ func _on_save_dialog_file_selected(path):
 			
 			data[id]["drag"] = child.dragSpeed
 			
+			data[id]["useMidiWobble"] = child.useMidiWobble
 			data[id]["xFrq"] = child.xFrq
 			data[id]["xAmp"] = child.xAmp
 			data[id]["yFrq"] = child.yFrq
@@ -535,7 +540,7 @@ func moveSpriteMenu(delta):
 	
 	var size = get_viewport().get_visible_rect().size
 	
-	var windowLength = 1250 #1187
+	var windowLength = 1275  #1187
 	
 	$ViewerArrows/Arrows.position.y =  size.y - 25
 	

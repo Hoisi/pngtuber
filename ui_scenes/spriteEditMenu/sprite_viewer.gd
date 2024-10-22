@@ -29,14 +29,15 @@ func setImage():
 	
 	$Slider/Label.text = "drag: " + str(Global.heldSprite.dragSpeed)
 	$Slider/DragSlider.value = Global.heldSprite.dragSpeed
-	
-	$WobbleControl/xFrqLabel.text = "x frequency: " + str(Global.heldSprite.xFrq)
+
+	$WobbleControl/UseMidi.button_pressed = Global.heldSprite.useMidiWobble
+	$WobbleControl/xFrqLabel.text = "x frequency: " + get_scaled_frequency(Global.heldSprite.xFrq)
 	$WobbleControl/xAmpLabel.text = "x amplitude: " + str(Global.heldSprite.xAmp)
 	
 	$WobbleControl/xFrq.value = Global.heldSprite.xFrq
 	$WobbleControl/xAmp.value = Global.heldSprite.xAmp
 	
-	$WobbleControl/yFrqLabel.text = "y frequency: " + str(Global.heldSprite.yFrq)
+	$WobbleControl/yFrqLabel.text = "y frequency: " + get_scaled_frequency(Global.heldSprite.yFrq)
 	$WobbleControl/yAmpLabel.text = "y amplitude: " + str(Global.heldSprite.yAmp)
 	
 	$WobbleControl/yFrq.value = Global.heldSprite.yFrq
@@ -120,9 +121,34 @@ func _on_drag_slider_value_changed(value):
 		Global.heldSprite.dragSpeed = value
 
 
+func _on_use_midi_toggled(value: bool):
+	Global.heldSprite.useMidiWobble = value
+	# Update label text
+	_on_x_frq_value_changed(Global.heldSprite.xFrq)
+	_on_y_frq_value_changed(Global.heldSprite.yFrq)
+
+
+func get_scaled_frequency(value):
+	if Global.heldSprite.useMidiWobble:
+		return str(value * 1000) + "% BPM"
+	else:
+		return str(value)
+
+# Create a 10 unit detant every 25 units
+const DEAD_ZONE = 10
+const SCALE_FACTOR = 1000.0
+func snap_slider_to_detant(value):
+	var scaled_value = int(value * SCALE_FACTOR) # I guess you can only mod ints in gdscript?
+	var distance = scaled_value % 25
+
+	if distance > DEAD_ZONE: return value
+	
+	return (scaled_value - distance) / SCALE_FACTOR
+
 func _on_x_frq_value_changed(value):
-	$WobbleControl/xFrqLabel.text = "x frequency: " + str(value)
-	Global.heldSprite.xFrq = value
+	var snapped_value = snap_slider_to_detant(value) if Global.heldSprite.useMidiWobble else value
+	$WobbleControl/xFrqLabel.text = "x frequency: " + get_scaled_frequency(snapped_value)
+	Global.heldSprite.xFrq = snapped_value
 	
 
 func _on_x_amp_value_changed(value):
@@ -131,8 +157,9 @@ func _on_x_amp_value_changed(value):
 
 
 func _on_y_frq_value_changed(value):
-	$WobbleControl/yFrqLabel.text = "y frequency: " + str(value)
-	Global.heldSprite.yFrq = value
+	var snapped_value = snap_slider_to_detant(value) if Global.heldSprite.useMidiWobble else value
+	$WobbleControl/yFrqLabel.text = "y frequency: " + get_scaled_frequency(snapped_value)
+	Global.heldSprite.yFrq = snapped_value
 
 func _on_y_amp_value_changed(value):
 	$WobbleControl/yAmpLabel.text = "y amplitude: " + str(value)
