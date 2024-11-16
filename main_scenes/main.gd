@@ -121,8 +121,15 @@ func _ready():
 		else:
 			Saving.settings["bounceOnCostumeChange"] = false
 		
-		saveLoaded = true
+		if Saving.settings.has("scaleOverall"):
+			scaleOverall = Saving.settings["scaleOverall"]
+			camera.zoom -= Vector2(scaleOverall/100, scaleOverall/100)
+			changeZoom()
+		else:
+			Saving.settings["scaleOverall"] = 100
 		
+		saveLoaded = true
+	
 	RenderingServer.set_default_clear_color(Global.backgroundColor)
 	swapMode()
 	settingsMenu.setvalues()
@@ -220,6 +227,8 @@ func zoomScene():
 				camera.zoom -= Vector2(0.1,0.1)
 				scaleOverall -= 10
 				changeZoom()
+				
+	Saving.settings["scaleOverall"] = scaleOverall
 	
 	$ControlPanel/ZoomLabel.modulate.a = lerp($ControlPanel/ZoomLabel.modulate.a,0.0,0.02)
 	

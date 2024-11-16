@@ -57,6 +57,7 @@ var settings = {
 	"blinkSpeed":1.0,
 	"blinkChance":200,
 	"bounceOnCostumeChange":false,
+	"scaleOverall": 100,
 }
 
 var settingsPath = "user://settings.pngtp"
